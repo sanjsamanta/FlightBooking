@@ -16,11 +16,11 @@ import static base.BaseTest.test;
 public class FlightSearchPage {
     WebDriver driver;
     WebDriverWait wait;
-    By closePopUp = By.xpath("//div[@class='pb-1 px-1 flex flex-middle nmx-1']//*[name()='svg']");
+    By closePopUp = By.xpath("//*[name()='svg' and @data-testid='closeIcon']");
     By flightBookingLink = By.xpath("//h3[contains(text(), 'Flights')]");
     By tripDropDown = By.xpath("//span[contains(text(), 'One way')]");
     By roundTrip = By.xpath("//p[normalize-space()='Round trip']");
-    By departDate = By.xpath("//div[contains(@class,'sc-aXZVg dSvAMK mr-2 mt-1')]//*[name()='svg']");
+    By departDate = By.cssSelector("div[class='sc-aXZVg dSvAMK mr-2 mt-1'] svg");
     By options = By.xpath("//ul[contains(@class, 'airportList')]//li");
     By monthText = By.xpath("//div[@class='DayPicker-Caption']/div");
     By nextMonthArrow = By.xpath("//*[name()='path' and contains(@d,'M10.869 2l')]");
