@@ -21,14 +21,11 @@ public class BaseTest implements ITestListener {
     public static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     @BeforeSuite
-    public void setupReport() {
+    public void setup(){
         ExtentSparkReporter spark = new ExtentSparkReporter("test-output/ExtentReport.html");
         extent = new ExtentReports();
         extent.attachReporter(spark);
-    }
 
-    @BeforeMethod
-    public void setup(){
         String url = ConfigReader.getProperty("cleartrip_url");
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
@@ -40,7 +37,7 @@ public class BaseTest implements ITestListener {
     }
 
     @AfterMethod
-    public void tearDown(ITestResult result) {
+    public void captureTestResult(ITestResult result) {
         String screenshotPath = ScreenshotUtil.takeScreenshot(driver, result.getName());
         //ITestResult - TestNG interface that provides runtime information about test method's execution
         if (result.getStatus() == ITestResult.FAILURE) {
@@ -49,11 +46,12 @@ public class BaseTest implements ITestListener {
         else if (result.getStatus() == ITestResult.SUCCESS) {
             test.get().pass("Test passed - Screenshot: " +test.get().addScreenCaptureFromPath(screenshotPath));
         }
-        driver.quit();
     }
 
     @AfterSuite
-    public void generateReport() {
+    public void tearDown() throws InterruptedException {
+        Thread.sleep(20000);
+        //driver.quit();
         extent.flush();
     }
 }

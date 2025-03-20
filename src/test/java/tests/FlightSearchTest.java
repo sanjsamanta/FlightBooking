@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class FlightSearchTest extends BaseTest {
 
-    @Test
-    public void testFlightBooking() throws IOException {
+    @Test(priority = 1)
+    public void testFlightSearch() throws IOException {
 
         FlightSearchPage flightSearchPage = new FlightSearchPage(driver);
         flightSearchPage.selectRoundTrip();
