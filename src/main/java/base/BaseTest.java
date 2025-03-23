@@ -51,7 +51,7 @@ public class BaseTest implements ITestListener {
     @AfterSuite
     public void tearDown() throws InterruptedException {
         Thread.sleep(20000);
-        //driver.quit();
+        driver.quit();
         extent.flush();
     }
 }

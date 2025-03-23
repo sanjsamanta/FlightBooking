@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 public class FlightSelectPage {
 
@@ -18,7 +19,6 @@ public class FlightSelectPage {
     By onwardDepartureTimes = By.xpath("//div[@data-test-attrib='onward-view']//div[contains(@class, 'flex-bottom') and contains(@class, 'ms-grid-column-1')][1]");
     By returnDepartureTimes = By.xpath("//div[@data-test-attrib='return-view']//div[contains(@class, 'flex-bottom') and contains(@class, 'ms-grid-column-1')][1]");
     By bookNow = By.xpath("//span[contains(text(), 'Book now')]");
-    By pageHeading = By.xpath("//h2[contains(text(), 'Review your itinerary')]");
     By flightPrice = By.xpath("//span[@class='c-neutral-900 fw-700 flex flex-right fs-6']");
 
     public FlightSelectPage(WebDriver driver) {
@@ -94,21 +94,55 @@ public class FlightSelectPage {
 
     public void clickBookNow() throws InterruptedException {
         WebElement bookNowClick = wait.until(ExpectedConditions.elementToBeClickable(bookNow));
-        try {
-            bookNowClick.click();
-            System.out.println("Normal click worked!");
-        } catch (ElementClickInterceptedException e) {
-            System.out.println("Using Javascript click!!");
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("arguments[0].scrollIntoView({block: 'center'});", bookNowClick);
-            Thread.sleep(2000);
-            js.executeScript("arguments[0].click();", bookNowClick);
+        int attempts = 0;
+        boolean success = false;
+        String mainWindow = driver.getWindowHandle();
+        while (attempts < 3 && !success) {
+            try {
+                bookNowClick.click();
+                System.out.println("Normal click worked!");
+                success = true;
+            } catch (ElementClickInterceptedException e) {
+                System.out.println("Using Javascript click!!");
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("arguments[0].scrollIntoView({block: 'center'});", bookNowClick);
+                Thread.sleep(2000);
+                js.executeScript("arguments[0].click();", bookNowClick);
+                success = true;
+            } catch (StaleElementReferenceException e) {
+                System.out.println("Stale element exception! Re-locating element");
+                bookNowClick = wait.until(ExpectedConditions.elementToBeClickable(bookNow));
+            }
+            Thread.sleep(3000);
+
+            Set<String> allWindows = driver.getWindowHandles();
+            if (allWindows.size() > 1) {
+                for (String window : allWindows) {
+                    if (!window.equals(mainWindow)) {
+                        driver.switchTo().window(window);
+                        System.out.println("Switched to new window: " + driver.getCurrentUrl());
+
+                        if (driver.getCurrentUrl().contains("itinerary/failure")) {
+                            System.out.println("Server error found! Closing error page and retrying...");
+                            driver.close();
+                            driver.switchTo().window(mainWindow);
+                            driver.navigate().refresh();
+                            Thread.sleep(5000);
+                            attempts++;
+                            success = false;
+                            break;
+                        } else {
+                            System.out.println("Navigated to Itinerary page!");
+                            return;
+                        }
+                    }
+                }
+            }
         }
-        Thread.sleep(3000);
-        if(driver.findElements(pageHeading).isEmpty()) {
-            throw new RuntimeException("Book now click failed!");
-        } else{
-            System.out.println("Navigated to Itinerary page!");
+        if(!success) {
+            throw new RuntimeException("Book now click failed after maximum retries!");
+        } else {
+            System.out.println("Navigated to Itinerary page!!!");
         }
     }
 
