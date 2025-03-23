@@ -1,6 +1,7 @@
 package tests;
 
 import base.BaseTest;
+import com.aventstack.extentreports.ExtentTest;
 import org.testng.annotations.Test;
 import pages.FlightSearchPage;
 import utils.ExcelUtils;
@@ -14,6 +15,7 @@ public class FlightSearchTest extends BaseTest {
     public void testFlightSearch() throws IOException {
 
         FlightSearchPage flightSearchPage = new FlightSearchPage(driver);
+
         flightSearchPage.selectRoundTrip();
         ExcelUtils excelUtils = new ExcelUtils("Sheet1");
         int rowCount = excelUtils.getRowCount();
@@ -31,7 +33,5 @@ public class FlightSearchTest extends BaseTest {
             flightSearchPage.selectLowestFareDate(returnMonth);
             flightSearchPage.searchFlight();
         }
-
     }
-
 }

@@ -41,10 +41,13 @@ public class BaseTest implements ITestListener {
         String screenshotPath = ScreenshotUtil.takeScreenshot(driver, result.getName());
         //ITestResult - TestNG interface that provides runtime information about test method's execution
         if (result.getStatus() == ITestResult.FAILURE) {
-            test.get().fail("Test failed - Screenshot: " +test.get().addScreenCaptureFromPath(screenshotPath));
+            test.get().fail("Test failed - " +result.getMethod().getMethodName())
+                    .fail("Exception: "+result.getThrowable().getMessage())
+                    .addScreenCaptureFromPath(screenshotPath);
         }
         else if (result.getStatus() == ITestResult.SUCCESS) {
-            test.get().pass("Test passed - Screenshot: " +test.get().addScreenCaptureFromPath(screenshotPath));
+            test.get().pass("Test passed - " +result.getMethod().getMethodName())
+                    .addScreenCaptureFromPath(screenshotPath);
         }
     }
 

@@ -22,8 +22,5 @@ public class FlightSelectTest extends BaseTest {
         flightSelectPage.clickBookNow();
         String itineraryPrice = itineraryPage.getItineraryPrice();
         Assert.assertEquals(flightPrice, itineraryPrice);
-
-
-
     }
 }
