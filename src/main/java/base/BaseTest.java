@@ -18,7 +18,7 @@ import java.time.Duration;
 
 //ITestListener - Allows TestNG to listen for test execution events
 public class BaseTest implements ITestListener {
-    public static WebDriver driver;
+    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     public static ExtentReports extent;
     public static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
@@ -33,32 +33,36 @@ public class BaseTest implements ITestListener {
         switch (browser) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                driver.set(new ChromeDriver());
                 break;
 
             case "edge":
                 WebDriverManager.edgedriver().setup();
-                driver = new EdgeDriver();
+                driver.set(new EdgeDriver());
                 break;
 
             case "safari":
                 WebDriverManager.safaridriver().setup();
-                driver = new SafariDriver();
+                driver.set(new SafariDriver());
                 break;
 
             default:
                 throw new IllegalArgumentException("Unsupported browser: "+browser);
         }
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        driver.get(url);
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        getDriver().manage().window().maximize();
+        getDriver().get(url);
         //Creates a test log in Extent Report using the test class name
         test.set(extent.createTest(getClass().getSimpleName()));
     }
 
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
+
     @AfterMethod
     public void captureTestResult(ITestResult result) {
-        String screenshotPath = ScreenshotUtil.takeScreenshot(driver, result.getName());
+        String screenshotPath = ScreenshotUtil.takeScreenshot(getDriver(), result.getName());
         //ITestResult - TestNG interface that provides runtime information about test method's execution
         if (result.getStatus() == ITestResult.FAILURE) {
             test.get().fail("Test failed - " +result.getMethod().getMethodName())
@@ -73,8 +77,8 @@ public class BaseTest implements ITestListener {
 
     @AfterSuite
     public void tearDown() throws InterruptedException {
-        Thread.sleep(20000);
-        driver.quit();
+        Thread.sleep(5000);
+        driver.get().quit();
         extent.flush();
     }
 }

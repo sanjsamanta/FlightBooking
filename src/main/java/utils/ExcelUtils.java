@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExcelUtils {
-    private static final String FILE_PATH="./src/test/java/testdata/FlightData.xlsx";
+    private static final String FILE_PATH=ConfigReader.getProperty("EXCEL_PATH");
     private Sheet sheet;
 
     public ExcelUtils(String sheetName) throws IOException {

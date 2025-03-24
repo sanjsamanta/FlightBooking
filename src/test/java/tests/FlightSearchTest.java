@@ -14,7 +14,7 @@ public class FlightSearchTest extends BaseTest {
     @Test(priority = 1)
     public void testFlightSearch() throws IOException {
 
-        FlightSearchPage flightSearchPage = new FlightSearchPage(driver);
+        FlightSearchPage flightSearchPage = new FlightSearchPage(getDriver());
 
         flightSearchPage.selectRoundTrip();
         ExcelUtils excelUtils = new ExcelUtils("Sheet1");

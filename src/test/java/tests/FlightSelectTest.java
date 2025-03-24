@@ -11,8 +11,8 @@ public class FlightSelectTest extends BaseTest {
     @Test(priority = 2)
     public void validateFlightSelectionAndPrice() throws InterruptedException {
 
-        FlightSelectPage flightSelectPage = new FlightSelectPage(driver);
-        ItineraryPage itineraryPage = new ItineraryPage(driver);
+        FlightSelectPage flightSelectPage = new FlightSelectPage(getDriver());
+        ItineraryPage itineraryPage = new ItineraryPage(getDriver());
         flightSelectPage.selectNonStop();
         flightSelectPage.selectEarlyMorningOnward();
         flightSelectPage.selectEarlyMorningReturn();
