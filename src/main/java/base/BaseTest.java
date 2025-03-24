@@ -6,6 +6,8 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -26,13 +28,31 @@ public class BaseTest implements ITestListener {
         extent = new ExtentReports();
         extent.attachReporter(spark);
 
-        String url = ConfigReader.getProperty("cleartrip_url");
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        String url = ConfigReader.getProperty("URL");
+        String browser = ConfigReader.getProperty("browser");
+        switch (browser) {
+            case "chrome":
+                WebDriverManager.chromedriver().setup();
+                driver = new ChromeDriver();
+                break;
+
+            case "edge":
+                WebDriverManager.edgedriver().setup();
+                driver = new EdgeDriver();
+                break;
+
+            case "safari":
+                WebDriverManager.safaridriver().setup();
+                driver = new SafariDriver();
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported browser: "+browser);
+        }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         driver.get(url);
-        // Creates a test log in Extent Report using the test class name
+        //Creates a test log in Extent Report using the test class name
         test.set(extent.createTest(getClass().getSimpleName()));
     }
 
