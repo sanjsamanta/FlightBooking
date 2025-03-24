@@ -144,20 +144,17 @@ public class FlightSearchPage {
             WebElement dateElement = prices.get(minIndex).findElement(dateList);
             JavascriptExecutor js = (JavascriptExecutor) driver;
 
-            for (int i = 0; i < 3; i++) {
-                try {
-                    wait.until(ExpectedConditions.elementToBeClickable(dateElement)).click();
-                    System.out.println("Successfully clicked lowest fare date");
-                    break;
+            try {
+                wait.until(ExpectedConditions.elementToBeClickable(dateElement)).click();
+                System.out.println("Successfully clicked lowest fare date");
+
                 } catch (StaleElementReferenceException e) {
-                    System.out.println("Element became stale. Retrying...");
+                    System.out.println("Element became stale!");
                 } catch (ElementClickInterceptedException e) {
                     System.out.println("Normal click failed! Trying javascript click");
                     js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", dateElement);
                     js.executeScript("arguments[0].click();", dateElement);
-                    break;
                 }
-            }
         } catch (StaleElementReferenceException e) {
             System.out.println("Element became stale for next month click. Retrying...");
         }
@@ -174,8 +171,6 @@ public class FlightSearchPage {
             } catch (Exception e) {
                 throw new RuntimeException("Failed to attach screenshot" + e.getMessage());
             }
-
         }
     }
-
 }
